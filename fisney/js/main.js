@@ -1,147 +1,298 @@
-// Sample movie data (expand as needed)
+// Sample movie data with real video paths
 const movies = [
   {
     id: 1,
-    title: "The Lion King",
-    poster: "assets/images/lion-king.jpg",
-    banner: "assets/images/lion-king-banner.jpg",
-    description: "A young lion prince flees his kingdom only to learn the true meaning of responsibility and bravery.",
-    section: "Recommended"
+    title: "Ocean Adventure",
+    description: "Follow the journey of marine explorers as they discover the hidden wonders of the deep sea. This documentary showcases breathtaking underwater footage and reveals the mysteries of marine life.",
+    poster: "public/assets/images/movie1.jpg",
+    videoSrc: "public/assets/videos/mymovie.mp4",
+    year: "2023",
+    duration: "1h 45m",
+    genre: "Documentary",
+    rating: "PG"
   },
   {
     id: 2,
-    title: "Frozen II",
-    poster: "assets/images/frozen2.jpg",
-    banner: "assets/images/frozen2-banner.jpg",
-    description: "Elsa, Anna, Kristoff, Olaf and Sven leave Arendelle to travel to an ancient forest.",
-    section: "New Releases"
+    title: "Mountain Quest",
+    description: "A team of climbers attempts to conquer the world's most challenging peaks. Through blizzards and treacherous conditions, they push the limits of human endurance in this thrilling adventure.",
+    poster: "public/assets/images/movie2.jpg",
+    videoSrc: "public/assets/videos/mymovie.mp4", // Using same video for demo
+    year: "2022",
+    duration: "2h 10m",
+    genre: "Adventure",
+    rating: "PG-13"
   },
   {
     id: 3,
-    title: "Avengers: Endgame",
-    poster: "assets/images/endgame.jpg",
-    banner: "assets/images/endgame-banner.jpg",
-    description: "The Avengers assemble once more in order to reverse Thanos' actions and restore balance.",
-    section: "Popular"
+    title: "Desert Mysteries",
+    description: "Uncover ancient secrets hidden beneath the sands of time. Archaeological discoveries reveal lost civilizations and forgotten technologies that challenge our understanding of history.",
+    poster: "public/assets/images/movie3.jpg",
+    videoSrc: "public/assets/videos/mymovie.mp4", // Using same video for demo
+    year: "2023",
+    duration: "1h 55m",
+    genre: "Documentary",
+    rating: "PG"
   },
   {
     id: 4,
-    title: "WandaVision",
-    poster: "assets/images/wandavision.jpg",
-    banner: "assets/images/wandavision-banner.jpg",
-    description: "Wanda Maximoff and Vision—two super-powered beings living idealized suburban lives—begin to suspect that everything is not as it seems.",
-    section: "Latest & Trending"
-  },
-  {
-    id: 5,
-    title: "Loki",
-    poster: "assets/images/loki.jpg",
-    banner: "assets/images/loki-banner.jpg",
-    description: "The mercurial villain Loki resumes his role as the God of Mischief in a new series.",
-    section: "Latest & Trending"
-  },
-  // Add more movies/shows as needed
+    title: "Forest Kingdom",
+    description: "Explore the rich biodiversity of Earth's most vibrant ecosystems. From the canopy to the forest floor, discover the intricate relationships between plants, animals, and their environment.",
+    poster: "public/assets/images/movie4.jpg",
+    videoSrc: "public/assets/videos/mymovie.mp4", // Using same video for demo
+    year: "2021",
+    duration: "1h 40m",
+    genre: "Nature",
+    rating: "G"
+  }
 ];
 
-// Carousel logic
-const featuredMovies = movies.slice(0, 3); // Pick first 3 as featured
-let currentSlide = 0;
+// Check if we're on the homepage
+if (document.getElementById('movieGrid')) {
+  // Render movie cards on the homepage
+  renderMovieGrid();
+}
 
-function renderCarousel() {
-  const carouselInner = document.getElementById('carouselInner');
-  if (!carouselInner) return;
-  carouselInner.innerHTML = featuredMovies.map(movie => `
-    <div class="min-w-full relative">
-      <img src="${movie.banner}" alt="${movie.title}" class="w-full h-72 md:h-96 object-cover rounded-xl"/>
-      <div class="absolute bottom-8 left-8 bg-black bg-opacity-60 px-6 py-4 rounded-xl max-w-lg">
-        <h2 class="text-3xl md:text-4xl font-bold mb-2">${movie.title}</h2>
-        <p class="mb-4 hidden md:block">${movie.description}</p>
-        <button onclick="goToMovie(${movie.id})" class="mt-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white font-semibold text-lg flex items-center">
-          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M6 4l12 6-12 6V4z"/></svg>
-          Watch Now
+// Check if we're on the player page
+if (document.getElementById('videoPlayer')) {
+  // Set up the player page
+  setupPlayerPage();
+}
+
+/**
+ * Renders all movie cards on the homepage grid
+ */
+function renderMovieGrid() {
+  const movieGrid = document.getElementById('movieGrid');
+  
+  // Create HTML for each movie card
+  const movieCardsHTML = movies.map(movie => `
+    <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg transition transform hover:scale-105">
+      <div class="relative">
+        <img src="${movie.poster}" alt="${movie.title}" class="w-full h-64 object-cover">
+        <div class="absolute top-2 right-2 bg-blue-600 text-xs font-bold px-2 py-1 rounded">
+          ${movie.rating}
+        </div>
+      </div>
+      <div class="p-4">
+        <h3 class="text-xl font-bold mb-2">${movie.title}</h3>
+        <div class="flex items-center text-sm text-gray-400 mb-2">
+          <span>${movie.year}</span>
+          <span class="mx-2">•</span>
+          <span>${movie.duration}</span>
+          <span class="mx-2">•</span>
+          <span>${movie.genre}</span>
+        </div>
+        <p class="text-gray-300 text-sm mb-4 line-clamp-2">${movie.description}</p>
+        <button 
+          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center justify-center w-full transition duration-200"
+          onclick="playMovie(${movie.id})"
+        >
+          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M4 4l12 6-12 6z"></path>
+          </svg>
+          Play Now
         </button>
       </div>
     </div>
   `).join('');
-  carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
+  
+  // Insert the movie cards into the grid
+  movieGrid.innerHTML = movieCardsHTML;
 }
 
-function nextSlide() {
-  currentSlide = (currentSlide + 1) % featuredMovies.length;
-  renderCarousel();
-}
-function prevSlide() {
-  currentSlide = (currentSlide - 1 + featuredMovies.length) % featuredMovies.length;
-  renderCarousel();
-}
-
-if (document.getElementById('carousel')) {
-  renderCarousel();
-  document.getElementById('nextSlide').onclick = nextSlide;
-  document.getElementById('prevSlide').onclick = prevSlide;
+/**
+ * Handles the "Play Now" button click
+ * @param {number} movieId - The ID of the movie to play
+ */
+function playMovie(movieId) {
+  // Store the selected movie ID in localStorage
+  localStorage.setItem('currentMovieId', movieId);
+  // Navigate to the player page
+  window.location.href = 'player.html';
 }
 
-// Movie card rendering
-function renderSection(sectionId, filterSection) {
-  const section = document.getElementById(sectionId);
-  if (!section) return;
-  section.innerHTML = movies.filter(m => m.section === filterSection).map(movie => `
-    <div class="relative w-40 md:w-48 flex-shrink-0 group cursor-pointer transition-transform duration-200 transform hover:scale-110 hover:z-10"
-         onclick="goToMovie(${movie.id})">
-      <img src="${movie.poster}" alt="${movie.title}" class="rounded-lg w-full h-56 md:h-64 object-cover shadow-lg"/>
-      <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition">
-        <button class="px-3 py-1 bg-blue-600 rounded text-white font-semibold mb-2 flex items-center">
-          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M6 4l12 6-12 6V4z"/></svg>
-          Watch Now
-        </button>
-        <span class="text-lg font-bold">${movie.title}</span>
+/**
+ * Sets up the player page with the selected movie
+ */
+function setupPlayerPage() {
+  // Get the movie ID from localStorage
+  const movieId = parseInt(localStorage.getItem('currentMovieId')) || 1;
+  
+  // Find the movie in our data
+  const movie = movies.find(m => m.id === movieId) || movies[0];
+  
+  // Update the page with movie details
+  document.getElementById('movieTitle').textContent = movie.title;
+  document.getElementById('movieDescription').textContent = movie.description;
+  
+  // Set up the video player
+  const videoPlayer = document.getElementById('videoPlayer');
+  videoPlayer.querySelector('source').src = movie.videoSrc;
+  
+  // Load the video
+  videoPlayer.load();
+  
+  // Render related movies (excluding the current one)
+  renderRelatedMovies(movie.id);
+  
+  // Update page title
+  document.title = `Fisney - ${movie.title}`;
+  
+  // Save watch history
+  saveToWatchHistory(movie);
+}
+
+/**
+ * Renders related movies in the sidebar
+ * @param {number} currentMovieId - The ID of the current movie to exclude
+ */
+function renderRelatedMovies(currentMovieId) {
+  const relatedMoviesContainer = document.getElementById('relatedMovies');
+  if (!relatedMoviesContainer) return;
+  
+  // Get other movies (excluding current)
+  const otherMovies = movies.filter(movie => movie.id !== currentMovieId);
+  
+  // Create HTML for related movies
+  const relatedMoviesHTML = otherMovies.slice(0, 3).map(movie => `
+    <div class="flex items-start space-x-3 cursor-pointer" onclick="playMovie(${movie.id})">
+      <img src="${movie.poster}" alt="${movie.title}" class="w-20 h-28 object-cover rounded">
+      <div>
+        <h3 class="font-semibold">${movie.title}</h3>
+        <p class="text-xs text-gray-400">${movie.duration} • ${movie.genre}</p>
       </div>
-      <span class="block mt-2 text-center font-medium">${movie.title}</span>
     </div>
   `).join('');
+  
+  // Insert the related movies
+  relatedMoviesContainer.innerHTML = relatedMoviesHTML;
 }
 
-// Render all sections
-if (document.getElementById('latestTrendingSection')) {
-  renderSection('latestTrendingSection', 'Latest & Trending');
-}
-if (document.getElementById('recommendedSection')) {
-  renderSection('recommendedSection', 'Recommended');
-}
-if (document.getElementById('newReleasesSection')) {
-  renderSection('newReleasesSection', 'New Releases');
-}
-if (document.getElementById('popularSection')) {
-  renderSection('popularSection', 'Popular');
+// Add this line to make the playMovie function available globally
+window.playMovie = playMovie;
+
+// Add custom CSS for line clamping (for movie descriptions)
+document.head.insertAdjacentHTML('beforeend', `
+  <style>
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    /* Custom video player styling */
+    video::-webkit-media-controls-panel {
+      background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
+    }
+    
+    /* Smooth transitions */
+    .transition {
+      transition: all 0.3s ease;
+    }
+  </style>
+`);
+
+/**
+ * Saves a movie to watch history
+ * @param {Object} movie - The movie to save to history
+ */
+function saveToWatchHistory(movie) {
+  // Get existing watch history or initialize empty array
+  let watchHistory = JSON.parse(localStorage.getItem('watchHistory') || '[]');
+  
+  // Check if movie is already in history
+  const existingIndex = watchHistory.findIndex(item => item.id === movie.id);
+  
+  // If movie exists in history, remove it (to add it to the front)
+  if (existingIndex !== -1) {
+    watchHistory.splice(existingIndex, 1);
+  }
+  
+  // Add movie to the beginning of history
+  watchHistory.unshift({
+    id: movie.id,
+    title: movie.title,
+    poster: movie.poster,
+    timestamp: new Date().toISOString()
+  });
+  
+  // Keep only the last 10 items
+  watchHistory = watchHistory.slice(0, 10);
+  
+  // Save back to localStorage
+  localStorage.setItem('watchHistory', JSON.stringify(watchHistory));
+  
+  // Render watch history if on player page
+  if (document.getElementById('watchHistoryContainer')) {
+    renderWatchHistory();
+  }
 }
 
-// Navigation to movie detail
-window.goToMovie = function(id) {
-  window.location.href = `movie.html?id=${id}`;
-};
-
-// Movie detail page logic
-function renderMovieDetail() {
-  const params = new URLSearchParams(window.location.search);
-  const id = parseInt(params.get('id'));
-  const movie = movies.find(m => m.id === id);
-  if (!movie) return;
-  const detail = document.getElementById('movieDetail');
-  if (!detail) return;
-  detail.innerHTML = `
-    <div class="relative rounded-xl overflow-hidden shadow-lg">
-      <img src="${movie.banner}" alt="${movie.title}" class="w-full h-72 md:h-96 object-cover"/>
-      <div class="absolute bottom-8 left-8 bg-black bg-opacity-60 px-8 py-6 rounded-xl max-w-xl">
-        <h1 class="text-4xl font-bold mb-2">${movie.title}</h1>
-        <p class="mb-4">${movie.description}</p>
-        <button class="px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded text-white font-semibold text-xl flex items-center">
-          <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M6 4l12 6-12 6V4z"/></svg>
-          Play
-        </button>
+/**
+ * Renders the watch history section
+ */
+function renderWatchHistory() {
+  const container = document.getElementById('watchHistoryContainer');
+  if (!container) return;
+  
+  // Get watch history
+  const watchHistory = JSON.parse(localStorage.getItem('watchHistory') || '[]');
+  
+  if (watchHistory.length === 0) {
+    container.innerHTML = '<p class="text-gray-400 col-span-full">No watch history yet.</p>';
+    return;
+  }
+  
+  // Create HTML for watch history
+  const historyHTML = watchHistory.map(item => `
+    <div class="bg-gray-800 rounded overflow-hidden shadow cursor-pointer" onclick="playMovie(${item.id})">
+      <div class="relative">
+        <img src="${item.poster}" alt="${item.title}" class="w-full h-32 object-cover">
+        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2">
+          <div class="h-1 bg-gray-700 rounded-full overflow-hidden">
+            <div class="bg-blue-500 h-full" style="width: ${getRandomProgress()}%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="p-2">
+        <h3 class="font-medium text-sm truncate">${item.title}</h3>
+        <p class="text-xs text-gray-400">${formatTimestamp(item.timestamp)}</p>
       </div>
     </div>
-  `;
+  `).join('');
+  
+  container.innerHTML = historyHTML;
 }
-if (window.location.pathname.endsWith('movie.html')) {
-  renderMovieDetail();
+
+/**
+ * Formats a timestamp into a readable string
+ * @param {string} timestamp - ISO timestamp
+ * @returns {string} Formatted date
+ */
+function formatTimestamp(timestamp) {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 0) {
+    return 'Today';
+  } else if (diffDays === 1) {
+    return 'Yesterday';
+  } else {
+    return `${diffDays} days ago`;
+  }
+}
+
+/**
+ * Gets a random progress percentage for demo purposes
+ * In a real app, this would be the actual watch progress
+ */
+function getRandomProgress() {
+  return Math.floor(Math.random() * 100);
+}
+
+// Initialize watch history on player page
+if (document.getElementById('watchHistoryContainer')) {
+  renderWatchHistory();
 }
