@@ -108,7 +108,7 @@ function playMovie(movieId) {
   // Store the selected movie ID in localStorage
   localStorage.setItem('currentMovieId', movieId);
   // Navigate to the player page
-  window.location.href = 'player.html';
+  window.location.href = '/player.html'; // Ensure the path is correct
 }
 
 /**
