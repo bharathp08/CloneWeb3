@@ -1,4 +1,4 @@
-// Sample movie data (replace with your own or fetch from API)
+// Sample movie data (expand as needed)
 const movies = [
   {
     id: 1,
@@ -24,7 +24,23 @@ const movies = [
     description: "The Avengers assemble once more in order to reverse Thanos' actions and restore balance.",
     section: "Popular"
   },
-  // Add more movies as needed
+  {
+    id: 4,
+    title: "WandaVision",
+    poster: "assets/images/wandavision.jpg",
+    banner: "assets/images/wandavision-banner.jpg",
+    description: "Wanda Maximoff and Vision—two super-powered beings living idealized suburban lives—begin to suspect that everything is not as it seems.",
+    section: "Latest & Trending"
+  },
+  {
+    id: 5,
+    title: "Loki",
+    poster: "assets/images/loki.jpg",
+    banner: "assets/images/loki-banner.jpg",
+    description: "The mercurial villain Loki resumes his role as the God of Mischief in a new series.",
+    section: "Latest & Trending"
+  },
+  // Add more movies/shows as needed
 ];
 
 // Carousel logic
@@ -36,10 +52,14 @@ function renderCarousel() {
   if (!carouselInner) return;
   carouselInner.innerHTML = featuredMovies.map(movie => `
     <div class="min-w-full relative">
-      <img src="${movie.banner}" alt="${movie.title}" class="w-full h-64 object-cover rounded-lg"/>
-      <div class="absolute bottom-6 left-6 bg-black bg-opacity-60 px-4 py-2 rounded">
-        <h2 class="text-2xl font-bold">${movie.title}</h2>
-        <button onclick="goToMovie(${movie.id})" class="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white font-semibold">Watch Now</button>
+      <img src="${movie.banner}" alt="${movie.title}" class="w-full h-72 md:h-96 object-cover rounded-xl"/>
+      <div class="absolute bottom-8 left-8 bg-black bg-opacity-60 px-6 py-4 rounded-xl max-w-lg">
+        <h2 class="text-3xl md:text-4xl font-bold mb-2">${movie.title}</h2>
+        <p class="mb-4 hidden md:block">${movie.description}</p>
+        <button onclick="goToMovie(${movie.id})" class="mt-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white font-semibold text-lg flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M6 4l12 6-12 6V4z"/></svg>
+          Watch Now
+        </button>
       </div>
     </div>
   `).join('');
@@ -66,11 +86,14 @@ function renderSection(sectionId, filterSection) {
   const section = document.getElementById(sectionId);
   if (!section) return;
   section.innerHTML = movies.filter(m => m.section === filterSection).map(movie => `
-    <div class="relative w-40 flex-shrink-0 group cursor-pointer transition-transform duration-200 transform hover:scale-105"
+    <div class="relative w-40 md:w-48 flex-shrink-0 group cursor-pointer transition-transform duration-200 transform hover:scale-110 hover:z-10"
          onclick="goToMovie(${movie.id})">
-      <img src="${movie.poster}" alt="${movie.title}" class="rounded-lg w-full h-56 object-cover"/>
+      <img src="${movie.poster}" alt="${movie.title}" class="rounded-lg w-full h-56 md:h-64 object-cover shadow-lg"/>
       <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition">
-        <button class="px-3 py-1 bg-blue-600 rounded text-white font-semibold mb-2">Watch Now</button>
+        <button class="px-3 py-1 bg-blue-600 rounded text-white font-semibold mb-2 flex items-center">
+          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M6 4l12 6-12 6V4z"/></svg>
+          Watch Now
+        </button>
         <span class="text-lg font-bold">${movie.title}</span>
       </div>
       <span class="block mt-2 text-center font-medium">${movie.title}</span>
@@ -78,6 +101,10 @@ function renderSection(sectionId, filterSection) {
   `).join('');
 }
 
+// Render all sections
+if (document.getElementById('latestTrendingSection')) {
+  renderSection('latestTrendingSection', 'Latest & Trending');
+}
 if (document.getElementById('recommendedSection')) {
   renderSection('recommendedSection', 'Recommended');
 }
@@ -102,12 +129,15 @@ function renderMovieDetail() {
   const detail = document.getElementById('movieDetail');
   if (!detail) return;
   detail.innerHTML = `
-    <div class="relative rounded-lg overflow-hidden">
-      <img src="${movie.banner}" alt="${movie.title}" class="w-full h-72 object-cover"/>
-      <div class="absolute bottom-6 left-6 bg-black bg-opacity-60 px-6 py-4 rounded">
-        <h1 class="text-3xl font-bold mb-2">${movie.title}</h1>
+    <div class="relative rounded-xl overflow-hidden shadow-lg">
+      <img src="${movie.banner}" alt="${movie.title}" class="w-full h-72 md:h-96 object-cover"/>
+      <div class="absolute bottom-8 left-8 bg-black bg-opacity-60 px-8 py-6 rounded-xl max-w-xl">
+        <h1 class="text-4xl font-bold mb-2">${movie.title}</h1>
         <p class="mb-4">${movie.description}</p>
-        <button class="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white font-semibold text-lg">Play</button>
+        <button class="px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded text-white font-semibold text-xl flex items-center">
+          <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M6 4l12 6-12 6V4z"/></svg>
+          Play
+        </button>
       </div>
     </div>
   `;
